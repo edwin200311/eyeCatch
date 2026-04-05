@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko" class="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eye Catch - 실시간 모니터링</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#003d9b",
+              "error": "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-low": "#f3f4f5",
+              "on-surface": "#191c1d",
+              "on-surface-variant": "#434654",
+              "background": "#f8f9fa",
+              "tertiary": "#7b2600"
+            },
+            fontFamily: { headline: ["Manrope"], body: ["Inter"] }
+          }
+        }
+      }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="text-on-surface min-h-screen pb-28">
+    
+    <!-- 상단 헤더 -->
+    <header class="bg-slate-50/70 backdrop-blur-xl fixed top-0 w-full z-50 shadow-sm flex justify-between items-center px-6 py-4">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-blue-700">visibility</span>
+            <h1 class="text-xl font-extrabold tracking-tighter text-blue-800 font-headline">Eye Catch</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- 사용자 이름 표시 영역 -->
+            <span id="userNameDisplay" class="text-sm font-bold text-on-surface-variant"></span>
+            <button onclick="logout()" class="text-xs bg-slate-200 px-3 py-1.5 rounded hover:bg-slate-300 transition-colors font-bold text-slate-700">로그아웃</button>
+        </div>
+    </header>
+
+    <main class="pt-24 px-4 md:px-8 max-w-7xl mx-auto">
+        <section class="mb-8 mt-4">
+            <div class="flex justify-between items-end">
+                <div>
+                    <p class="text-sm font-semibold text-primary mb-1 uppercase tracking-wider">Live System</p>
+                    <h2 class="text-3xl font-extrabold font-headline tracking-tight text-on-surface">실시간 모니터링</h2>
+                </div>
+                <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm">
+                    <span class="w-2 h-2 bg-error rounded-full animate-pulse"></span>
+                    <span class="text-xs font-bold text-on-surface-variant">REC: LIVE</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 영상 및 상태 영역 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-8 space-y-6">
+                <!-- CCTV 영상 -->
+                <div class="relative aspect-video bg-slate-900 rounded-3xl overflow-hidden shadow-sm group">
+                    <img class="w-full h-full object-cover opacity-80" src="https://images.unsplash.com/photo-1565626423194-55113d726615?auto=format&fit=crop&q=80" alt="CCTV 화면">
+                    <div class="absolute inset-0 p-6 pointer-events-none">
+                        <div class="border-2 border-primary w-32 h-48 absolute top-1/4 left-1/3 rounded-lg">
+                            <span class="absolute -top-7 left-0 bg-primary text-white text-[10px] px-2 py-0.5 rounded font-bold">탐지 활성화</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 최근 알림 (클릭 시 상세 페이지로 이동하도록 a 태그 추가) -->
+                <a href="incident_details.html" class="block bg-surface-container-lowest p-5 rounded-xl shadow-sm space-y-4 hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold font-headline text-on-surface uppercase tracking-wider">최근 알림</h3>
+                        <span class="text-xs text-on-surface-variant font-medium">방금 전</span>
+                    </div>
+                    <div class="flex items-center gap-4 bg-surface-container-low p-3 rounded-lg border-l-4 border-error">
+                        <div class="w-16 h-12 rounded bg-slate-200 overflow-hidden flex-shrink-0 relative">
+                            <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&q=80" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-grow">
+                            <p class="text-sm font-semibold text-error">북측 창고 무단 접근</p>
+                            <p class="text-xs text-on-surface-variant">구역 1: 제한 구역</p>
+                        </div>
+                        <span class="material-symbols-outlined text-primary">chevron_right</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- AI 상태 패널 -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <h3 class="font-headline font-bold text-on-surface mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">neurology</span> AI 인텔리전스 현황
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1.5">
+                                <span class="text-on-surface-variant font-medium">분석 정확도</span>
+                                <span class="text-primary font-bold">98.2%</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-surface-container-low rounded-full overflow-hidden">
+                                <div class="h-full bg-primary" style="width: 98.2%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-2xl">
+                            <span class="text-xs font-semibold text-blue-800">활성 감지 구역</span>
+                            <span class="text-lg font-headline font-extrabold text-blue-900">4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 하단 네비게이션 바 (다른 파일들로 이어지는 링크 추가) -->
+    <nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-4 pt-2 bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 rounded-t-xl">
+        <!-- 현재 화면이므로 강조(Active) 스타일 적용 -->
+        <a href="main.html" class="flex flex-col items-center justify-center bg-blue-50 text-blue-800 rounded-2xl px-5 py-2 transition-all">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">videocam</span>
+            <span class="text-xs font-medium">모니터링</span>
+        </a>
+        <a href="zone.html" class="flex flex-col items-center justify-center text-slate-500 px-5 py-2 hover:text-blue-600 transition-all">
+            <span class="material-symbols-outlined">grid_view</span>
+            <span class="text-xs font-medium">구역</span>
+        </a>
+        <a href="history.html" class="flex flex-col items-center justify-center text-slate-500 px-5 py-2 hover:text-blue-600 transition-all">
+            <span class="material-symbols-outlined">warning</span>
+            <span class="text-xs font-medium">사건 내역</span>
+        </a>
+        <a href="settings.html" class="flex flex-col items-center justify-center text-slate-500 px-5 py-2 hover:text-blue-600 transition-all">
+            <span class="material-symbols-outlined">settings</span>
+            <span class="text-xs font-medium">설정</span>
+        </a>
+    </nav>
+
+    <!-- 데이터 로드 및 로그아웃 스크립트 -->
+    <script>
+        window.onload = function() {
+            const savedUser = JSON.parse(localStorage.getItem('eyeCatchUser'));
+            
+            if(savedUser && savedUser.name) {
+                document.getElementById('userNameDisplay').textContent = savedUser.name + ' 님';
+            } else {
+                alert('로그인이 필요한 서비스입니다.');
+                window.location.href = 'login.html';
+            }
+        };
+
+        function logout() {
+            alert('안전하게 로그아웃 되었습니다.');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
